@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kopi Premium</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .hero {
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      color: white;
+      text-align: center;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .keranjang-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .keranjang-item button {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">Kopi Premium</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" style="background-image: url('header-bg.jpeg');">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Selamat Datang di Kopi Premium</h1>
+      <p>Rasakan kenikmatan kopi terbaik pilihan kami</p>
+      <a href="#menu" class="btn btn-primary">Lihat Menu</a>
+    </div>
+  </section>
+
+  <!-- Menu Section -->
+  <section id="menu" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-4">Menu Kami</h2>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <img src="espresso.jpeg" class="card-img-top" alt="Espresso">
+            <div class="card-body">
+              <h5 class="card-title">Espresso</h5>
+              <p class="card-text">Kopi murni dengan rasa autentik</p>
+              <button class="btn btn-primary tambah-keranjang" data-produk="Espresso" data-harga="20000">Tambah ke Keranjang</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <img src="latte.jpeg" class="card-img-top" alt="Latte">
+            <div class="card-body">
+              <h5 class="card-title">Latte</h5>
+              <p class="card-text">Kopi susu dengan cita rasa lembut</p>
+              <button class="btn btn-primary tambah-keranjang" data-produk="Latte" data-harga="25000">Tambah ke Keranjang</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <img src="americano.jpeg" class="card-img-top" alt="Americano">
+            <div class="card-body">
+              <h5 class="card-title">Americano</h5>
+              <p class="card-text">Kopi dengan perpaduan espresso dan rasa menyegarkan</p>
+              <button class="btn btn-primary tambah-keranjang" data-produk="Americano" data-harga="30000">Tambah ke Keranjang</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <button class="btn btn-success checkout" data-bs-toggle="modal" data-bs-target="#keranjangModal">Checkout</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Keranjang Modal -->
+  <div class="modal fade" id="keranjangModal" tabindex="-1" aria-labelledby="keranjangModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="keranjangModalLabel">Keranjang Belanja</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="keranjangList"></div>
+          <hr>
+          <div id="totalHarga" class="fw-bold text-end"></div>
+          <div id="pembeliData" class="mt-4">
+            <form id="checkoutForm">
+              <div class="mb-3">
+                <label for="name" class="form-label">Nama</label>
+                <input type="text" class="form-control" id="name" placeholder="Masukkan nama Anda" required>
+              </div>
+              <div class="mb-3">
+                <label for="address" class="form-label">Alamat</label>
+                <textarea class="form-control" id="address" placeholder="Masukkan alamat Anda" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="phone" class="form-label">Nomor Telepon</label>
+                <input type="tel" class="form-control" id="phone" placeholder="Masukkan nomor telepon Anda" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Lanjutkan Checkout</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const keranjang = [];
+
+    function updateKeranjangModal() {
+      const keranjangList = document.getElementById('keranjangList');
+      const totalHargaElement = document.getElementById('totalHarga');
+      keranjangList.innerHTML = '';
+      let totalHarga = 0;
+
+      keranjang.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.classList.add('keranjang-item');
+        div.innerHTML = `
+          <span>${item.produk} - IDR ${item.harga}</span>
+          <button onclick="hapusItem(${index})">Hapus</button>
+        `;
+        keranjangList.appendChild(div);
+        totalHarga += item.harga;
+      });
+
+      totalHargaElement.textContent = `Total: IDR ${totalHarga}`;
+    }
+
+    function hapusItem(index) {
+      keranjang.splice(index, 1);
+      updateKeranjangModal();
+    }
+
+    document.querySelectorAll('.tambah-keranjang').forEach(button => {
+      button.addEventListener('click', function () {
+        const produk = this.getAttribute('data-produk');
+        const harga = parseInt(this.getAttribute('data-harga'));
+        keranjang.push({ produk, harga });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: `${produk} berhasil ditambahkan ke keranjang.`,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        updateKeranjangModal();
+      });
+    });
+
+    document.getElementById('checkoutForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const nama = document.getElementById('name').value;
+      const alamat = document.getElementById('address').value;
+      const telepon = document.getElementById('phone').value;
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Terima Kasih!',
+        html: `Pesanan atas nama <strong>${nama}</strong> dengan alamat <strong>${alamat}</strong> dan nomor telepon <strong>${telepon}</strong> berhasil diproses.`,
+      }).then(() => {
+        keranjang.length = 0;
+        updateKeranjangModal();
+      });
+    });
+  </script>
+</body>
+
+</html>
